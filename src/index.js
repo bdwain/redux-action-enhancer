@@ -1,10 +1,19 @@
 function createActionEnhancerMiddleware(mappings) {
-  return store => next => action => {
+  return ({getState, dispatch}) => next => action => {
     const enhancedFields = mappings.reduce((current, nextMapping) => {
+      let result = current;
       if (nextMapping.id in action) {
-        return Object.assign(current, nextMapping.mapState(store.getState()));
+        result = Object.assign({}, result);
+
+        if (nextMapping.mapState) {
+          Object.assign(result, nextMapping.mapState(getState()));
+        }
+        if (nextMapping.mapDispatch) {
+          Object.assign(result, nextMapping.mapDispatch(dispatch));
+        }
       }
-      return current;
+
+      return result;
     }, {});
     return next(Object.assign(enhancedFields, action));
   };
