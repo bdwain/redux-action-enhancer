@@ -1,5 +1,5 @@
 function createActionEnhancerMiddleware(mappings) {
-  return ({getState, dispatch}) => next => action => {
+  return ({getState}) => next => action => {
     const enhancedFields = mappings.reduce((current, nextMapping) => {
       let result = current;
       if (action[nextMapping.id]) {
@@ -7,9 +7,6 @@ function createActionEnhancerMiddleware(mappings) {
 
         if (nextMapping.mapState) {
           Object.assign(result, nextMapping.mapState(getState()));
-        }
-        if (nextMapping.mapDispatch) {
-          Object.assign(result, nextMapping.mapDispatch(dispatch));
         }
       }
 
