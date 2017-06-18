@@ -51,7 +51,3 @@ function reducer(state = initialState, action){
 }
 
 ```
-
-### Future
-
-Determine if a mapDisaptch method is practical.
