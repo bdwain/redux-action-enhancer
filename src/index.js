@@ -1,8 +1,9 @@
-function createActionEnhancerMiddleware(mappings) {
+function createActionEnhancerMiddleware(getEnhancers) {
   return ({getState}) => next => action => {
-    const enhancedFields = mappings.reduce((current, nextMapping) => {
+    const state = getState();
+    const enhancedFields = getEnhancers(state).reduce((current, nextMapping) => {
       if (nextMapping.id in action) {
-        Object.assign(current, nextMapping.mapState(getState(), action[nextMapping.id]));
+        Object.assign(current, nextMapping.mapState(state, action[nextMapping.id]));
       }
 
       return current;
