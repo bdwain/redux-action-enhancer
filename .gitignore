@@ -1,6 +1,6 @@
-node_modules
-coverage
+.DS_Store
 *.log
-lib
+node_modules
 dist
+lib
 es
