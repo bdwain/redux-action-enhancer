@@ -59,5 +59,5 @@ function reducer(state = initialState, action){
 
 ### Why is getEnhancers a function instead of an array
 For 2 reasons:
-1. If you dynamically load a portion of you app that contains new enhancers, you can't pass those enhancers in on an array when the store is created. By passing a function, it can reference data that is updated at runtime.
+1. If you dynamically load a portion of your app that contains new enhancers, you can't pass those enhancers in on an array when the store is created. By passing a function, it can reference data that is updated at runtime.
 2. It allows you to choose enhancers based on the redux state if desired.
