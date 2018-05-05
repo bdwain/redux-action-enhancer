@@ -96,7 +96,7 @@ const toggleEnhancer = {
   id: ENHANCE_WITH_TOGGLE,
   mapState: (state, toggle) => {
     return {
-      toggleResult: getToggleValue(state, toggle)
+      toggleValue: getToggleValue(state, toggle)
     };
   }
 };
@@ -126,6 +126,6 @@ const middleware = [createActionEnhancerMiddleware(() => actionEnhancers)];
 const store = createStore(reducer, undefined, applyMiddleware(middleware));
 store.addActionEnhancers = newEnhancers => actionEnhancers.push(...newEnhancers);
 
-//dynamic loading code
+//in the dynamic loading code
 store.addActionEnhancers(newModule.enhancers);
 ```
