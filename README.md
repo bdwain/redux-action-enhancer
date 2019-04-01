@@ -18,8 +18,8 @@ import createActionEnhancerMiddleware from 'redux-action-enhancer';
 import {createStore, applyMiddleware} from 'redux';
 import enhancers from './action-enhancers';
 
-//make sure to pass a function to createActionEnhancerMiddleware, not an array
-const store = createStore(reducer, undefined, applyMiddleware(createActionEnhancerMiddleware(() => enhancers)));
+
+const store = createStore(reducer, undefined, applyMiddleware(createActionEnhancerMiddleware(enhancers)));
 ```
 
 Next, create an enhancer
@@ -112,11 +112,11 @@ export function enhancedAction(){
 }
 ```
 
-You can also match all actions of a certain type rather than actions with a given property
+You can also match all actions of certain types rather than actions with a given property
 ```js
 //action-enhancers.js
 const fooEnhancer = {
-  actionType: 'FOO_LOADED',
+  actionTypes: ['FOO_LOADED', 'BAR_LOADED'],
   mapState: state => {
     return {
       items: getItems(state)
@@ -127,13 +127,8 @@ const fooEnhancer = {
 export default [fooEnhancer];
 ```
 
-
-### Why is getEnhancers a function instead of an array
-For 2 reasons:
-1. If you dynamically load a portion of your app that contains new enhancers, you can't pass those enhancers in on an array when the store is created. By passing a function, it can reference data that is updated at runtime.
-2. The function is passed the redux state as a parameter, which allows you to choose enhancers based on the redux state if desired. 
-
-Here's an example of enabling dynamically loaded action enhancers
+### Changing action enhnacers after store creation
+If you want your list of action enhancers to be dynamic, you can pass a function to `createActionEnhancerMiddleware` instead of an array.
 
 ```js
 let actionEnhancers = [...originalEnhancers];
@@ -144,3 +139,7 @@ store.addActionEnhancers = newEnhancers => actionEnhancers.push(...newEnhancers)
 //in the dynamic loading code
 store.addActionEnhancers(newModule.enhancers);
 ```
+
+This may be useful if you are dynamically loading portions of your app that define their own action enhancers.
+
+The function is also passed the redux state, so you can determine the available action enhancers based on the state of your application.

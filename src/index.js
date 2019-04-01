@@ -1,4 +1,8 @@
 export default function createActionEnhancerMiddleware(getEnhancers) {
+  if(typeof getEnhancers !== 'function'){
+    getEnhancers = () => getEnhancers;
+  }
+
   return ({getState}) => next => action => {
     const state = getState();
 
@@ -8,7 +12,7 @@ export default function createActionEnhancerMiddleware(getEnhancers) {
         Object.assign(enhancedFields, enhancer.mapState(state, action[enhancer.id]));
       }
       //no need to check if actionType is defined since type is required anyway
-      else if(action.type === enhancer.actionType) {
+      else if(enhancer.actionTypes && enhancer.actionTypes.indexOf(action.type) > -1) {
         Object.assign(enhancedFields, enhancer.mapState(state));
       }
     });
