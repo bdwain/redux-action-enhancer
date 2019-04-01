@@ -1,4 +1,4 @@
-Redux Action Enhancer
+Redux Action Enhancers
 =============
 
 Dependency injection for redux actions. Enhance your actions with values from the store. Inspired by connected components in [react-redux](https://github.com/reactjs/react-redux).
@@ -110,6 +110,21 @@ export function enhancedAction(){
     [ENHANCE_WITH_TOGGLE]: 'FOO' //action.toggleValue will be the value of the FOO toggle
   }
 }
+```
+
+You can also match all actions of a certain type rather than actions with a given property
+```js
+//action-enhancers.js
+const fooEnhancer = {
+  actionType: 'FOO_LOADED',
+  mapState: state => {
+    return {
+      items: getItems(state)
+    };
+  }
+};
+
+export default [fooEnhancer];
 ```
 
 
