@@ -18,7 +18,8 @@
     "dist",
     "es",
     "lib",
-    "src"
+    "src",
+    "index.d.ts"
   ],
   "scripts": {
     "clear": "rimraf lib dist es",
