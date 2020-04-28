@@ -143,3 +143,125 @@ store.addActionEnhancers(newModule.enhancers);
 This may be useful if you are dynamically loading portions of your app that define their own action enhancers.
 
 The function is also passed the redux state, so you can determine the available action enhancers based on the state of your application.
+
+### TypeScript Support
+
+Follow this pattern to use action enhancers in your TypeScript application.
+
+1. Define "Enhancement" shape
+
+The type `Enhancement` is an `object`, so make a type that is an object.
+```
+type CurrentTimeEnhancement = {
+  now: Date;
+};
+```
+
+Alternatively, make an interface that extends `Enhancement`.
+```
+interface CurrentUserEnhancement extends Enhancement {
+  email: string;
+}
+```
+
+2. Define action enhancer
+
+```
+// state for demo purposes
+type TestState = {
+  lastUpdated: Date | null;
+  user: {
+    email: string;
+  };
+  data: string | null;
+};
+
+// enhancer with id
+
+const ENHANCE_WITH_CURRENT_TIME = Symbol('ENHANCE_WITH_CURRENT_TIME');
+
+const currentTimeEnhancer: ActionEnhancer<TestState, CurrentTimeEnhancement> = {
+  id: ENHANCE_WITH_CURRENT_TIME,
+  mapState: () => ({
+    now: new Date()
+  })
+};
+
+// enhance action types
+
+const currentUserEnhancer: ActionEnhancer<TestState, CurrentUserEnhancement> = {
+  actionTypes: ['loginSuccess', 'refreshSuccess'],
+  mapState: state => ({
+    email: state.user.email
+  })
+};
+
+// enhancer with value
+
+const ENHANCE_WITH_CUSTOM_VALUE = Symbol('ENHANCE_WITH_CUSTOM_VALUE');
+
+type CustomValueEnhancement = {
+  value: string;
+};
+
+const customValueEnhancer: ActionEnhancer<TestState, CustomValueEnhancement, string> = {
+  id: ENHANCE_WITH_CUSTOM_VALUE,
+  mapState: (state, value) => ({
+    value
+  })
+};
+```
+
+3. Define the "unenhanced" ("base", "internal", "core", whatever you'd like to call it) version of your action, which includes the fields defined by your specific action and then enhancer IDs
+
+```
+export enum actionTypes {
+  COOL_STUFF = 'doCoolStuff',
+  OTHER_STUFF = 'doOtherStuff'
+}
+
+type UnenhancedMyCoolAction = UnenhancedAction<actionTypes.COOL_STUFF> & {
+  cool: string;
+};
+```
+
+4. Create an action creator which returns the "core" action with enhancers added
+
+```
+const coolStuff = (value: string): UnenhancedMyCoolAction => ({
+  type: actionTypes.COOL_STUFF,
+  cool: value,
+  [ENHANCE_WITH_CURRENT_TIME]: true
+});
+```
+
+5. Define the enhanced version of the action
+
+```
+type MyCoolAction = EnhancedAction<
+  Action<actionTypes.COOL_STUFF>,
+  CurrentTimeEnhancement,
+  CurrentUserEnhancement,
+  CustomValueEnhancement
+>;
+```
+
+Generally speaking, the unenhanced action should not need to be used by any code other than the action creator and unit tests; there are notable exceptions to this, such as if you need to reference the unenhanced action type in a function return. Any code that consumes the action from Redux, such as the reducer, should use the enhanced version of the action, which will have the fully realized fields available.
+
+e.g.,
+
+```
+type ReducerActions = MyCoolAction | OtherCoolAction;
+
+function reducer(state: TestState, action: ReducerActions): TestState {
+  switch (action.type) {
+    case actionTypes.COOL_STUFF:
+      return Object.assign({}, state, {
+        lastUpdated: action.email ? action.now : null,
+        data: action.value
+      });
+    default:
+      return state;
+  }
+}
+```
