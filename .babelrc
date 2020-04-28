@@ -1,13 +1,8 @@
  {
-  "presets": [["env", {"modules": false}]],
-  "plugins": [
-    "transform-object-rest-spread",
-    "transform-es3-member-expression-literals",
-    "transform-es3-property-literals"
-  ],
+  "presets": [["@babel/preset-env", {"modules": false}]],
   "env": {
     "commonjs": {
-      "presets": [["env", {"modules": "commonjs"}]]
+      "presets": [["@babel/preset-env", {"modules": "commonjs"}]]
     }
   }
 }
