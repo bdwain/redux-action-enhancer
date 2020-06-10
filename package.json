@@ -1,6 +1,6 @@
 {
   "name": "redux-action-enhancer",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Action enhancer middleware for redux.",
   "main": "lib/index.js",
   "module": "es/index.js",
