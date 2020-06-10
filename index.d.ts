@@ -13,7 +13,7 @@ type ActionEnhancerByType = {
 };  
 
 type MapState<Enhancement, State, Value> = {
-  mapState: [Value] extends never ?
+  mapState: [Value] extends [never] ?
     (state: State) => Enhancement :
     (state: State, value: Value) => Enhancement;
 };
@@ -39,7 +39,7 @@ export type EnhancedAction<
 > = A & E1 & E2 & E3 & E4 & E5 & E6 & E7 & E8 & E9;
 
 export type AnyEnhancer<State = unknown> =
-  ActionEnhancer<Enhancement, State, unknown> |
+  ActionEnhancer<Enhancement, State, any> |
   ActionEnhancer<Enhancement, State, never>;
 
 declare function createActionEnhancerMiddleware<S = unknown>(
