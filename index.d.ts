@@ -4,11 +4,11 @@ export type Enhancement = object;
 
 export type EnhancerId = string | symbol;
 
-type ActionEnhancerById = {
+type ActionEnhancerByIdShape = {
   readonly id: EnhancerId;
 };
 
-type ActionEnhancerByType = {
+type ActionEnhancerByTypeShape = {
   actionTypes: string[];
 };  
 
@@ -18,8 +18,14 @@ type MapState<Enhancement, State, Value> = {
     (state: State, value: Value) => Enhancement;
 };
 
+export type ActionEnhancerById<E extends Enhancement, State = unknown, Value = never> =
+  ActionEnhancerByIdShape & MapState<E, State, Value>;
+
+export type ActionEnhancerByType<E extends Enhancement, State = unknown, Value = never> =
+  ActionEnhancerByTypeShape & MapState<E, State, Value>;
+
 export type ActionEnhancer<E extends Enhancement, State = unknown, Value = never> =
-  (ActionEnhancerById | ActionEnhancerByType) & MapState<E, State, Value>;
+  ActionEnhancerById<E, State, Value> | ActionEnhancerByType<E, State, Value>;
 
 export type UnenhancedAction<T> = Action<T> & {
   [index: string]: any;
@@ -41,6 +47,11 @@ export type EnhancedAction<
 export type AnyEnhancer<State = unknown> =
   ActionEnhancer<Enhancement, State, any> |
   ActionEnhancer<Enhancement, State, never>;
+
+declare function isEnhancerById<E extends Enhancement, State = unknown, Value = never>(e: ActionEnhancer<E, State, Value>): e is ActionEnhancerById<E, State, Value>;
+declare function isEnhancerByType<E extends Enhancement, State = unknown, Value = never>(e: ActionEnhancer<E, State, Value>): e is ActionEnhancerByType<E, State, Value>;
+export {isEnhancerById, isEnhancerByType};
+
 
 declare function createActionEnhancerMiddleware<S = unknown>(
   getEnhancers: ((state: S) => AnyEnhancer<S>[]) | AnyEnhancer<S>[] 
