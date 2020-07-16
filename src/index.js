@@ -20,3 +20,10 @@ export default function createActionEnhancerMiddleware(getEnhancers) {
     return next(Object.assign(enhancedFields, action));
   };
 }
+
+export function isEnhancerById(e) {
+  return Object.prototype.hasOwnProperty.call(e, 'id');
+}
+export function isEnhancerByType(e) {
+  return Object.prototype.hasOwnProperty.call(e, 'actionTypes');
+}

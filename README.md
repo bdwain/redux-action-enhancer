@@ -180,7 +180,7 @@ type TestState = {
 
 const ENHANCE_WITH_CURRENT_TIME = Symbol('ENHANCE_WITH_CURRENT_TIME');
 
-const currentTimeEnhancer: ActionEnhancer<TestState, CurrentTimeEnhancement> = {
+const currentTimeEnhancer: ActionEnhancerById<TestState, CurrentTimeEnhancement> = {
   id: ENHANCE_WITH_CURRENT_TIME,
   mapState: () => ({
     now: new Date()
@@ -189,7 +189,7 @@ const currentTimeEnhancer: ActionEnhancer<TestState, CurrentTimeEnhancement> = {
 
 // enhance action types
 
-const currentUserEnhancer: ActionEnhancer<TestState, CurrentUserEnhancement> = {
+const currentUserEnhancer: ActionEnhancerByType<TestState, CurrentUserEnhancement> = {
   actionTypes: ['loginSuccess', 'refreshSuccess'],
   mapState: state => ({
     email: state.user.email
@@ -204,7 +204,7 @@ type CustomValueEnhancement = {
   value: string;
 };
 
-const customValueEnhancer: ActionEnhancer<TestState, CustomValueEnhancement, string> = {
+const customValueEnhancer: ActionEnhancerById<TestState, CustomValueEnhancement, string> = {
   id: ENHANCE_WITH_CUSTOM_VALUE,
   mapState: (state, value) => ({
     value
